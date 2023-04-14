@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>牛股大师</title>
+    <style>
+        .center {
+            text-align: center;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .button {
+            margin-right: 20px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            background-color: #f2f2f2;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .button.selected {
+            background-color: #333;
+            color: #f2f2f2;
+        }
+
+        .content {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .content h3 {
+            margin-top: 0;
+        }
+
+        .content1, .content2, .content3 {
+            display: none;
+        }
+
+        /*iframe p {*/
+        /*    font-size: 16px;*/
+        /*    color: #333;*/
+        /*}*/
+
+        .content.content2, .content.content3 {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            overflow: auto;
+        }
+
+        .content.content2 iframe, .content.content3 iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+
+        }
+
+        .text-gradient {
+            font-family: 华文行楷;
+            background-image: linear-gradient(to right, orange, purple);
+            -webkit-background-clip: text;
+            color: transparent;
+            font-size: 24px;
+        }
+
+
+    </style>
+</head>
+<body>
+<div class="center" id="top">
+    <h3>牛股大师网站设计与开发</h3>
+    <div class="button-container">
+        <button class="button selected" onclick="showContent('content1', this)">所有股票信息</button>
+        <button class="button" onclick="showContent('content2', this)">个股诊断分析</button>
+        <button class="button" onclick="showContent('content3', this)">股票预测信息</button>
+    </div>
+</div>
+<div class="content content1">
+    <h2>功能1内容</h2>
+    <p>这是功能1的内容。</p>
+</div>
+<div class="content content2">
+    <iframe src="http://127.0.0.1:5000/single_stock_analysis"></iframe>
+</div>
+<div class="content content3">
+    <iframe src="http://127.0.0.1:5000/single_stock_prediction"></iframe>
+</div>
+
+
+<div style="position: relative;  text-align: center">
+    <img src="../static/img/background.jpg" class="photo" style="height: 450px; margin-top: 20px">
+    <span class="text-gradient" style="position: absolute; bottom: 50%; left: 0;">投资有风险，入市需谨慎！</span>
+    <span class="text-gradient" style="position: absolute; bottom: 50%; right: 0;">预测可参考，切莫全相信！</span>
+    <span class="text-gradient" style="position: absolute; bottom: 50%; top: 5%;left: 42% ">否则人人都是巴菲特</span>
+</div>
+<script>
+    // 获取上方元素的引用
+    var topElement = document.getElementById('top');
+
+    // 获取上方元素的高度
+    var topHeight = topElement.offsetHeight;
+
+    // 计算页面的高度
+    var pageHeight = topHeight;
+
+    // 输出页面的高度
+    console.log('页面高度：' + pageHeight + '像素');
+</script>
+<script>
+    var buttons = document.querySelectorAll(".button");
+
+    for (var i = 0; i < buttons.length; i++) {
+        buttons[i].classList.remove('selected');
+    }
+    var p = document.querySelector('.photo');
+    var t = document.querySelectorAll('.text-gradient');
+
+    var contents = document.querySelectorAll('.content');
+    for (var i = 0; i < contents.length; i++) {
+        contents[i].style.display = 'none';
+    }
+
+    function showContent(className, button) {
+        for (var i = 0; i < buttons.length; i++) {
+            buttons[i].classList.remove('selected');
+        }
+        button.classList.add('selected');
+        for (var i = 0; i < contents.length; i++) {
+            contents[i].style.display = 'none';
+        }
+        p.style.display = 'none';
+        t[0].style.display = 'none';
+        t[1].style.display = 'none';
+        document.getElementsByClassName(className)[0].style.display = 'block';
+    }
+</script>
+
+</body>
+</html>

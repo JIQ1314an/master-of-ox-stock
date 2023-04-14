@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>单只股票预测</title>
+    <script src="../static/js/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../static/js/echarts.min.js"></script>
+    <style>
+
+        .select {
+            color: #090;
+            background-color: #eee;
+            text-align: center;
+
+            display: flex;
+            justify-content: center; /*垂直居中*/
+            align-items: center; /*水平居中*/
+        }
+
+        .selectpicker {
+            display: inline-block;
+            width: 150px;
+            position: relative;
+            vertical-align: middle;
+            padding: 0;
+            overflow: hidden;
+            background-color: #fff;
+            color: #555;
+            border: 1px solid #aaa;
+            text-shadow: none;
+            border-radius: 4px;
+            transition: box-shadow 0.25s ease;
+            z-index: 2;
+        }
+
+    </style>
+</head>
+<body>
+<div class="select">
+    <h4>股票代码及名称&emsp;&emsp;</h4>
+    <select class="selectpicker" id="eq_num" data-actions-box="true" data-live-search="true"
+            data-live-search-placeholder="请选择···">
+        <!--        <option>SH600125  铁龙物流</option>-->
+    </select>
+
+    <!--    <button>立即查询</button>-->
+    &emsp;
+    <input id="button" type="button" value="立即查询" onclick="buttonClick();">
+</div>
+
+
+<script>
+    $.ajax({
+        url: "/get_stock_basic_info",
+        success: function (data) {
+            // console.log (data.name);
+            var names = data.name;
+            var symbols = data.symbol
+            $('#eq_num').empty();//清空select，不然每点一次都循环添加一遍数据越来越多
+            for (var i = 0; i < names.length; i++) {
+                $(".selectpicker").append('<option>' + symbols[i] + ' ' + names[i] + '</option>');
+            }
+            ;
+            // 缺一不可
+            $('#eq_num').selectpicker('refresh');
+            $('#eq_num').selectpicker('render');
+        },
+        error: function (xhr, type, errorThrown) {
+        }
+    })
+</script>
+
+
+<div id="ssp" style="width: 1260px; height: 500px"></div>
+<script>
+    $(
+        function () {
+            var chart = echarts.init(document.getElementById('ssp'), 'pink', {renderer: 'canvas'});
+            $.ajax({
+                type: "GET",
+                url: "http://127.0.0.1:5000/get_sstock_prediction_drawing",
+                dataType: 'json',
+                success: function (result) {
+                    chart.setOption(result);
+                }
+            });
+        }
+    )
+</script>
+
+
+</body>
+</html>
+

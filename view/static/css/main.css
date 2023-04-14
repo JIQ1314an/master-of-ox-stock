@@ -1,0 +1,108 @@
+body {
+    margin: 0;
+    background: #333;
+}
+
+#title {
+    /* 30% + 40% + 30% */
+    position: absolute;
+    width: 40%;
+    height: 10%;
+    top: 0;
+    left: 30%;
+    /*background: #666666;*/
+    color: white;
+    font-size: 30px;
+    /* 布局居中 */
+    display: flex;
+    align-items: center;
+    justify-content: center; /*竖直方向居中*/
+}
+
+#tm {
+    position: absolute;
+    /*width: 30%;*/
+    height: 10%;
+    /*top: 0;*/
+    /*right: 0;*/
+    /*background: deeppink;*/
+    right: 2%;
+    top: 5%;
+    color: #FFFFFF;
+    font-size: 20px;
+}
+
+#c1 {
+    position: absolute;
+    width: 40%;
+    height: 30%;
+    top: 10%;
+    left: 30%;
+    /*background: aqua;*/
+    color: white;
+}
+
+.num {
+    width: 25%;
+    float: left;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: gold;
+    font-size: 15px;
+    /*margin-top: 20px;*/
+}
+
+.txt {
+    width: 25%;
+    float: left;
+    font-family: "幼圆";
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#c2 {
+    position: absolute;
+    width: 40%;
+    height: 60%;
+    top: 40%;
+    left: 30%;
+    /*background: antiquewhite;*/
+}
+
+#l1 {
+    position: absolute;
+    width: 30%;
+    height: 45%;
+    top: 10%;
+    left: 0;
+    /*background: aquamarine;*/
+}
+
+#l2 {
+    position: absolute;
+    width: 30%;
+    height: 45%;
+    top: 55%;
+    left: 0;
+    /*background: blueviolet;*/
+}
+
+#r1 {
+    position: absolute;
+    width: 30%;
+    height: 45%;
+    top: 10%;
+    left: 70%;
+    /*background:  cornflowerblue;*/
+}
+
+#r2 {
+    position: absolute;
+    width: 30%;
+    height: 45%;
+    top: 55%;
+    left: 70%;
+    /*background: coral;*/
+}
