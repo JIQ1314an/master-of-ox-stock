@@ -5,6 +5,7 @@
 import numpy as np
 from pyecharts import options as opts
 from pyecharts.charts import Line, Kline, Grid
+from pyecharts.options import VisualMapOpts
 
 from controller.drawing.utils import Tech
 from controller.fetch_data import get_single_stock_info
@@ -13,13 +14,12 @@ from model.parser_conf import args
 
 
 class PredVisualization:
-    def __init__(self, symbol, name):
+    def __init__(self, name, symbol):
         self.name = name
         self.symbol = symbol
         self.stock_data = get_single_stock_info(symbol)
         self.x_data = self.stock_data.index.astype("str").to_list()
-
-        args.corpusFile = self.stock_data
+        args.corpusFile = self.stock_data  # 及时修改源数据
         self.true_data, self.pred_data, _, _ = eval_()
 
     def origin_close_line_show(self):
@@ -58,7 +58,7 @@ class PredVisualization:
                   {"max": v1, "color": "green"}, ]
         # 链式调用作用域()
         g = (
-            Line({'width': '100%', 'height': '480px'})  # 设置画布大小，px像素
+            Line(init_opts=opts.InitOpts(height="300px",))  # 设置画布大小，px像素
                 .add_xaxis(self.x_data)  # x数据
 
                 .add_yaxis(
@@ -67,7 +67,7 @@ class PredVisualization:
                 is_smooth=True,  # 平滑曲线
                 is_symbol_show=False,  # 不显示折线的小圆圈
                 label_opts=opts.LabelOpts(is_show=False),
-                linestyle_opts=opts.LineStyleOpts(width=4),  # 线宽
+                linestyle_opts=opts.LineStyleOpts(width=3),  # 线宽
                 markpoint_opts=opts.MarkPointOpts(data=[  # 添加标记符
                     opts.MarkPointItem(type_='max', name='最大值'),
                     opts.MarkPointItem(type_='min', name='最小值'), ], symbol_size=[100, 30]),
@@ -81,7 +81,7 @@ class PredVisualization:
                 visualmap_opts=opts.VisualMapOpts(  # 视觉映射配置
                     orient="horizontal", split_number=4,
                     pos_left='center', is_piecewise=True,
-                    pieces=pieces, ),
+                    pieces=pieces, pos_top="440px"),
                 yaxis_opts=opts.AxisOpts(min_=des['min'] - 2),
 
                 datazoom_opts=[  # 设置zoom参数后即可缩放
@@ -90,7 +90,7 @@ class PredVisualization:
                         type_="inside",
                         xaxis_index=[0],
                         range_start=0,
-                        range_end=100,
+                        range_end=300,
                     ),
                     opts.DataZoomOpts(
                         is_show=True,
@@ -98,7 +98,7 @@ class PredVisualization:
                         pos_top="0",
                         xaxis_index=[0],
                         range_start=0,
-                        range_end=100,
+                        range_end=300,
                     ),
                 ],
 
@@ -108,14 +108,13 @@ class PredVisualization:
                     data=bar_data, ))
 
         )
-
         return g
 
     def real_pred_close_line_fitting(self):
         line = Line()
         line.add_xaxis(range(len(self.true_data)))
-        line.add_yaxis("真实值", self.true_data, is_smooth=True, linestyle_opts=opts.LineStyleOpts(width=4))
-        line.add_yaxis("预测值", self.pred_data, is_smooth=True, linestyle_opts=opts.LineStyleOpts(width=4))
+        line.add_yaxis("true close", self.true_data, is_smooth=True, linestyle_opts=opts.LineStyleOpts(width=4))
+        line.add_yaxis("pred close", self.pred_data, is_smooth=True, linestyle_opts=opts.LineStyleOpts(width=4))
 
         line.set_series_opts(
             label_opts=opts.LabelOpts(is_show=False),
@@ -128,7 +127,7 @@ class PredVisualization:
         )
 
         line.set_global_opts(
-            title_opts=opts.TitleOpts(title="股票真实值与预测值折线图"),
+            title_opts=opts.TitleOpts(title="股票真实值与预测值折线图", pos_top="500px"),
             xaxis_opts=opts.AxisOpts(type_="category"),
             yaxis_opts=opts.AxisOpts(
                 type_="value",
@@ -138,39 +137,39 @@ class PredVisualization:
                 max_=int(max(self.true_data + self.pred_data)) + 1,
             ),
             tooltip_opts=opts.TooltipOpts(trigger="axis"),
-            legend_opts=opts.LegendOpts(is_show=True),
+            legend_opts=opts.LegendOpts(is_show=True, pos_top="500px"),
         )
         return line
 
 
-def prediction_graph_combination(symbol, name):
+def prediction_graph_combination(name, symbol):
     # 1. 获取可视化对象
-    pv = PredVisualization(symbol, name)
+    pv = PredVisualization(name, symbol)
 
-    # 2. 获取真实值与预测值拟合曲线图
-    fit = pv.real_pred_close_line_fitting()
-
-    # 3. 获取牛市区域的原收盘价可视化图
+    # 2. 获取牛市区域的原收盘价可视化图
     show = pv.origin_close_line_show()
+
+    # 3. 获取真实值与预测值拟合曲线图
+    fit = pv.real_pred_close_line_fitting()
 
     # 4.组合【使用网格将多张图标组合到一起显示】
     # height='1300px'
-    grid_chart = Grid(init_opts=opts.InitOpts(width='1260px', height="1300px"))
+    grid_chart = Grid(init_opts=opts.InitOpts(width='1260px', height="1300px"), )
 
     grid_chart.add(
-        fit,
-        grid_opts=opts.GridOpts(pos_left="15%", pos_right="8%", pos_top='50px', height='500px'),
-    )
+        show,
+        grid_opts=opts.GridOpts(pos_left="15%", pos_right="8%", pos_top='50px', height='350px'),
 
-    # grid_chart.add(
-    #     show,
-    #     grid_opts=opts.GridOpts(pos_left="15%", pos_right="8%", pos_top='350px', height='120px'),
-    # )
+    )
+    grid_chart.add(
+        fit,
+        grid_opts=opts.GridOpts(pos_left="15%", pos_right="8%", pos_top='600px', height='400px'),
+    )
     return grid_chart
 
 
 if __name__ == "__main__":
     name = "人民网"
     symbol = "SH603000"
-    g = prediction_graph_combination(symbol, name)
+    g = prediction_graph_combination(name, symbol)
     g.render("stock_prediction.html")

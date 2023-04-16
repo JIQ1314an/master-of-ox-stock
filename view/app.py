@@ -2,6 +2,8 @@ import argparse
 import os
 import sys
 
+from model.parser_conf import unknown
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from flask import Flask, render_template, jsonify
@@ -46,14 +48,14 @@ def get_sstock_analysis_drawing():
     return ssa.dump_options_with_quotes()
 
 
-# @app.route("/get_sstock_prediction_drawing")
-# def get_sstock_prediction_drawing():
-#     name = "人民网"
-#     symbol = "SH603000"
-#     ssp = prediction_graph_combination(name, symbol)
-#     return ssp.dump_options_with_quotes()
+@app.route("/get_sstock_prediction_drawing")
+def get_sstock_prediction_drawing():
+    name = "人民网"
+    symbol = "SH603000"
+    ssp = prediction_graph_combination(name, symbol)
+    return ssp.dump_options_with_quotes()
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, extra_files=unknown)
     # app.run(host="127.0.0.1", port=5000, debug=True)

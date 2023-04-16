@@ -10,7 +10,6 @@ from model.parser_conf import args
 #
 def getData(corpusFile, sequence_length, batchSize):
     # 数据预处理 ，去除id、股票代码、前一天的收盘价、交易日期等对训练无用的无效数据
-    global stock_data
     if type(corpusFile) == str: stock_data = read_csv(corpusFile)
     if type(corpusFile) == pd.DataFrame: stock_data = corpusFile.copy()
     # stock_data.drop('ts_code', axis=1, inplace=True)  # 删除第二列’股票代码‘

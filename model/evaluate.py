@@ -44,21 +44,21 @@ def eval_():
         pred_price_test = p[0] * (close_max - close_min) + close_min
 
         # print('预测值是%.2f,真实值是%.2f' % (pred_price_test, real_price_test))
-        real_list.append(real_price_test)
-        pred_list.append(pred_price_test)
+        real_list.append(round(real_price_test, 2))
+        pred_list.append(round(pred_price_test, 2))
 
-    rmse, r2 = measure(real_list, pred_list)
+    mse, r2 = measure(real_list, pred_list)
     # drawing(real_list, pred_list)
 
-    return real_list, pred_list, rmse, r2
+    return real_list, pred_list, mse, r2
 
 
 def measure(real_price, pred_price):
-    rmse = metrics.mean_absolute_error(real_price, pred_price)
+    mse = metrics.mean_squared_error(real_price, pred_price)
     r2 = metrics.r2_score(real_price, pred_price)
-    print("RMSE:", rmse)
+    print("RMSE:", mse)
     print("R2:", r2)
-    return rmse, r2
+    return mse, r2
 
 
 def drawing(real_price, pred_price):

@@ -23,7 +23,9 @@ parser.add_argument('--save_file', default='save/stock.pkl')  # 模型保存位�
 
 parser.add_argument('--better_loss', default=0.007, type=float)  # loss值
 
-args = parser.parse_args()
+# args = parser.parse_args()
+# ... 其他参数
+args, unknown = parser.parse_known_args()
 
 device = torch.device(f"cuda:{args.gpu}" if torch.cuda.is_available() and args.useGPU else "cpu")
 args.device = device
