@@ -6,7 +6,7 @@ from model.parser_conf import unknown
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 
 from controller import fetch_data
 from controller.drawing.single_stock_analysis import analysis_graph_combination
@@ -54,6 +54,17 @@ def get_sstock_prediction_drawing():
     symbol = "SH603000"
     ssp = prediction_graph_combination(name, symbol)
     return ssp.dump_options_with_quotes()
+
+
+@app.route("/get_select_stock", methods=["POST"])
+def get_select_stock():
+    # GET请求
+    print(request.headers)
+    print(request.json)
+    print(request.data)
+    # 获取数据并转化成字典
+    user_info = request.form.to_dict()
+    print(user_info)
 
 
 if __name__ == '__main__':

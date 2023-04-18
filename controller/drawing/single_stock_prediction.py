@@ -5,6 +5,7 @@
 import numpy as np
 from pyecharts import options as opts
 from pyecharts.charts import Line, Kline, Grid
+from pyecharts.commons.utils import JsCode
 from pyecharts.options import VisualMapOpts
 
 from controller.drawing.utils import Tech
@@ -20,7 +21,7 @@ class PredVisualization:
         self.stock_data = get_single_stock_info(symbol)
         self.x_data = self.stock_data.index.astype("str").to_list()
         args.corpusFile = self.stock_data  # 及时修改源数据
-        self.true_data, self.pred_data, _, _ = eval_()
+        self.true_data, self.pred_data, self.mse, self.r2 = eval_()
 
     def origin_close_line_show(self):
         flag = 0
@@ -58,7 +59,7 @@ class PredVisualization:
                   {"max": v1, "color": "green"}, ]
         # 链式调用作用域()
         g = (
-            Line(init_opts=opts.InitOpts(height="300px",))  # 设置画布大小，px像素
+            Line(init_opts=opts.InitOpts(height="300px", ))  # 设置画布大小，px像素
                 .add_xaxis(self.x_data)  # x数据
 
                 .add_yaxis(
@@ -88,7 +89,7 @@ class PredVisualization:
                     opts.DataZoomOpts(
                         is_show=True,
                         type_="inside",
-                        xaxis_index=[0],
+                        xaxis_index=0,
                         range_start=0,
                         range_end=300,
                     ),
@@ -96,7 +97,7 @@ class PredVisualization:
                         is_show=True,
                         type_="slider",
                         pos_top="0",
-                        xaxis_index=[0],
+                        xaxis_index=0,
                         range_start=0,
                         range_end=300,
                     ),
@@ -113,8 +114,8 @@ class PredVisualization:
     def real_pred_close_line_fitting(self):
         line = Line()
         line.add_xaxis(range(len(self.true_data)))
-        line.add_yaxis("true close", self.true_data, is_smooth=True, linestyle_opts=opts.LineStyleOpts(width=4))
-        line.add_yaxis("pred close", self.pred_data, is_smooth=True, linestyle_opts=opts.LineStyleOpts(width=4))
+        line.add_yaxis("true close", self.true_data, is_smooth=True,linestyle_opts=opts.LineStyleOpts(width=4))
+        line.add_yaxis("pred close", self.pred_data, is_smooth=True,linestyle_opts=opts.LineStyleOpts(width=4))
 
         line.set_series_opts(
             label_opts=opts.LabelOpts(is_show=False),
@@ -138,6 +139,34 @@ class PredVisualization:
             ),
             tooltip_opts=opts.TooltipOpts(trigger="axis"),
             legend_opts=opts.LegendOpts(is_show=True, pos_top="500px"),
+            graphic_opts=[
+                opts.GraphicGroup(
+                    graphic_item=opts.GraphicItem(
+                        # 控制整体的位置
+                        right="8%",
+                        top="39%",
+                    ),
+                    children=[
+                        # opts.GraphicText控制文字的显示
+                        opts.GraphicText(
+                            graphic_item=opts.GraphicItem(
+                                left="center",
+                                top="middle",
+                                z=100,
+                            ),
+                            graphic_textstyle_opts=opts.GraphicTextStyleOpts(
+                                # 可以通过jsCode添加js代码，也可以直接用字符串
+                                text=f"MSE: {round(self.mse, 4)}\nR2: {round(self.r2, 2)}",
+                                font="14px Microsoft YaHei",
+                                graphic_basicstyle_opts=opts.GraphicBasicStyleOpts(
+                                    fill="#333"
+                                )
+                            )
+                        )
+                    ]
+                )
+            ],
+
         )
         return line
 
@@ -149,6 +178,7 @@ def prediction_graph_combination(name, symbol):
     # 2. 获取牛市区域的原收盘价可视化图
     show = pv.origin_close_line_show()
 
+
     # 3. 获取真实值与预测值拟合曲线图
     fit = pv.real_pred_close_line_fitting()
 
@@ -157,14 +187,15 @@ def prediction_graph_combination(name, symbol):
     grid_chart = Grid(init_opts=opts.InitOpts(width='1260px', height="1300px"), )
 
     grid_chart.add(
-        show,
+        fit,
         grid_opts=opts.GridOpts(pos_left="15%", pos_right="8%", pos_top='50px', height='350px'),
 
     )
     grid_chart.add(
-        fit,
-        grid_opts=opts.GridOpts(pos_left="15%", pos_right="8%", pos_top='600px', height='400px'),
+        show,
+        grid_opts=opts.GridOpts(pos_left="15%", pos_right="8%", pos_top='600px', height='300px'),
     )
+
     return grid_chart
 
 

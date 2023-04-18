@@ -38,14 +38,16 @@
 <body>
 <div class="select">
     <h4>股票代码及名称&emsp;&emsp;</h4>
+    <form action="http://127.0.0.1:5000/get_select_stock" method="post">
     <select class="selectpicker" id="eq_num" data-actions-box="true" data-live-search="true"
             data-live-search-placeholder="请选择···">
         <!--        <option>SH600125  铁龙物流</option>-->
     </select>
-
-    <!--    <button>立即查询</button>-->
-    &emsp;
-    <input id="button" type="button" value="立即查询" onclick="buttonClick();">
+        &emsp;
+     <button type="submit">立即查询</button>
+    </form>
+<!--    &emsp;-->
+<!--    <input id="button" type="button" value="立即查询" onclick="buttonClick();">-->
 </div>
 
 
@@ -60,7 +62,6 @@
             for (var i = 0; i < names.length; i++) {
                 $(".selectpicker").append('<option>' + symbols[i] + ' ' + names[i] + '</option>');
             }
-            ;
             // 缺一不可
             $('#eq_num').selectpicker('refresh');
             $('#eq_num').selectpicker('render');

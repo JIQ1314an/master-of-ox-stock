@@ -56,8 +56,8 @@ def eval_():
 def measure(real_price, pred_price):
     mse = metrics.mean_squared_error(real_price, pred_price)
     r2 = metrics.r2_score(real_price, pred_price)
-    print("RMSE:", mse)
-    print("R2:", r2)
+    # print("MSE:", mse)
+    # print("R2:", r2)
     return mse, r2
 
 
