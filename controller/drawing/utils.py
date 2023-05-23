@@ -11,6 +11,7 @@ class Tech:
         self.close = self.data['close']
         self.low = self.data['low']
         self.high = self.data['high']
+        self.volume = self.data['volume']
         # self.pre_close = self.data['pre_close']
         # self.eob = self.data['eob']
         # self.bob = self.data['bob']
@@ -109,7 +110,7 @@ class Tech:
         指标向上，价格向下，买进信号
         指标向下，价格向上，卖出信号
         '''
-        ad = sum(((self.close - self.low) - (self.high - self.close)) / (self.high - self.low) * self.volume)
+        ad = (((self.close - self.low) - (self.high - self.close)) / (self.high - self.low) * self.volume).cumsum()
         return ad
 
     def atr(self, N=14):

@@ -2,6 +2,8 @@
 # @Time : 2023/3/24 10:49
 # @Author : JIQ
 # @Email : jiq1314an@gmail.com
+import re
+
 import numpy as np
 import pandas as pd
 import pymysql
@@ -41,3 +43,24 @@ def data_transform_all_stock(json_data):
     # print('\nTab size：', len(data_df))
 
     return data_df
+
+
+def get_detailed_news_url(string: str):
+    # 匹配模式
+    # pattern = re.compile(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+')
+    pattern = re.compile(r'<a[^>]+href=["\'](.*?)["\']')
+    news_url = re.findall(pattern, string)[0]
+    # print(news_url)
+    return news_url
+
+
+def remove_child_content(text_set: set):
+    sorted_strings = sorted(text_set, key=lambda t: len(t), reverse=True)  # 将字符串集合按照长度从大到小排序
+    result = set()  # 使用一个新集合存储结果
+    # 遍历排序后的字符串集合，对于每个字符串，判断它是否被新集合中已有的字符串包含
+    for s in sorted_strings:
+        if not any([s in rs for rs in result]):
+            result.add(s)
+    return result
+
+

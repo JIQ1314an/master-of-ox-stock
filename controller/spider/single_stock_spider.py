@@ -160,39 +160,33 @@ def update_single_stock_info(symbol: str):
         close_conn(conn, cursor)
 
 
-def insert_or_update_single(data_source):
-    begin = "2022-12-1"
-    end = "2023-3-31"
+def insert_or_update_single(data_source, begin="2022-12-1", end="2023-3-31"):
     for symbol in data_source.index:
         conn, cursor = get_conn()
-        sq1_query = "select %s in (select distinct(symbol) from single_stock_info)"  # 获取当前最大时间戳
+        sq1_query = "select %s in (select distinct(symbol) from single_stock_info)"
         cursor.execute(sq1_query, symbol)
 
         if cursor.fetchone()[0]:
             update_single_stock_info(symbol)
+
+            # 附加信息
+            sq2_query = "select timestamp from single_stock_info where symbol = %s order by timestamp asc limit 1"  # 获取当前最大时间戳  # 获取当前股票的最早的时间
+            cursor.execute(sq2_query, symbol)
+            query_res = cursor.fetchone()[0]
+
+            if query_res > date2timestamp(begin):  # cursor.fetchone()[0]等价fetchall()[0][0]
+                print(f"{time.asctime()} 开始获取{symbol}在{begin}之后的数据...")
+                end = timestamp2date(query_res - 86400 * 1000)  # 获取到当前爬取的历史数据时间的前一天时间
+
+                # print(end)
+
+                insert_single_stock_info(symbol, begin, end)
+
+                print(f"{time.asctime()} 获取{symbol}数据完毕!!!")
+            else:
+                print(f"{time.asctime()} {symbol}已经获取到{begin}之后的所有数据! ")
+
         else:
             insert_single_stock_info(symbol, begin, end)
 
 
-if __name__ == "__main__":
-    max_page = 1
-    data_source = all_stock_crawl(max_page)
-
-    l = len(sys.argv)
-    if l == 1:
-        s = """
-        请输入参数
-        参数说明：
-        up_single 更新单股数据信息
-        up_hot 更新实时热搜
-        up_all 更新所有股票信息
-        """
-        print(s)
-    else:
-        order = sys.argv[1]
-        if order == 'up_single':
-            insert_or_update_single(data_source)
-        elif order == 'up_hot':
-            update_hotsearch()
-        elif order == 'up_all':
-            update_all_stock_info(data_source)

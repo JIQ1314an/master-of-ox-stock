@@ -33,21 +33,21 @@
             z-index: 2;
         }
 
+
     </style>
 </head>
 <body>
 <div class="select">
     <h4>股票代码及名称&emsp;&emsp;</h4>
-    <form action="http://127.0.0.1:5000/get_select_stock" method="post">
     <select class="selectpicker" id="eq_num" data-actions-box="true" data-live-search="true"
             data-live-search-placeholder="请选择···">
         <!--        <option>SH600125  铁龙物流</option>-->
     </select>
-        &emsp;
-     <button type="submit">立即查询</button>
-    </form>
-<!--    &emsp;-->
-<!--    <input id="button" type="button" value="立即查询" onclick="buttonClick();">-->
+
+   &emsp;
+
+    <!-- 提交按钮 -->
+    <button id="submit-btn">立即查询</button>
 </div>
 
 
@@ -55,7 +55,7 @@
     $.ajax({
         url: "/get_stock_basic_info",
         success: function (data) {
-            // console.log (data.name);
+            // console.logs (data.name);
             var names = data.name;
             var symbols = data.symbol
             $('#eq_num').empty();//清空select，不然每点一次都循环添加一遍数据越来越多
@@ -71,6 +71,15 @@
     })
 </script>
 
+<!-- 更新的结果显示区域 -->
+<div class="ssp" id="result">
+</div>
+
+<!--
+<div class="wordcloud-class" id="result_wordcloud">
+</div>-->
+
+<!--
 <div id="ssp" style="width: 1260px; height: 1300px"></div>
 <script>
     $(
@@ -87,8 +96,60 @@
         }
     )
 </script>
+-->
+
+<script>
+    $(function () {
+        // 绑定提交按钮的点击事件
+        $('#submit-btn').click(function () {
+            // 获取选择框的值
+            var value = $('#eq_num').val();
+            // 发送 Ajax 请求
+            $.ajax({
+                url: '/get_sstock_prediction_drawing',
+                data: {value: value},
+                type: 'POST',
+                success: function (data) {
+                    // 发送get请求并刷新html页面
+                    console.log("请求成功");
+                    var url = "http://127.0.0.1:5000/update_sstock_prediction?t=" + new Date().getTime();
+
+                    $('#result').load(url, function () {
+                        console.log("股票预测加载成功");
+                    });
+
+                 /*
+                    var url = "http://127.0.0.1:5000/selected_stock_news_wordcloud"; //不要加时间戳
+                     //确保浏览器使用缓存中的词云图，提高加载速度，并减少词云图的刷新次数。
+
+                    $('#result_wordcloud').load(url, function () {
+                        console.logs("词云图加载成功");
+                    });
+
+                  */
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+
+    $('select').on('change', function() {
+    var selected_option = $(this).find('option:selected').text();
+
+    $.ajax({
+        url: '/get_select_stock_to_prediction',
+        type: 'POST',
+        data: {selected_option: selected_option},
+        success: function(response) {
+            // 处理响应
+        }
+    });
+});
 
 
+</script>
 </body>
 </html>
 

@@ -82,7 +82,7 @@ class AnalysisVisualization:
         ma_line.add_xaxis(xaxis_data=self.x_timestamp)
         window_nums = [5, 10, 30, 60]
         snames = ["MA5", "MA10", "MA30", "MA60"]
-        close_df = self.stock_data_extracted[["close", 'high', 'low']]
+        close_df = self.stock_data_extracted[["close", 'high', 'low', 'volume']]
 
         for sn, wn in zip(snames, window_nums):
             ma_line = ma_line_add_yaxis(ma_line, close_df, sn, wn)
@@ -155,7 +155,7 @@ class AnalysisVisualization:
                 is_hover_animation=False,
                 linestyle_opts=opts.LineStyleOpts(width=3, opacity=0.5),
                 label_opts=opts.LabelOpts(is_show=False),
-                itemstyle_opts=opts.ItemStyleOpts(color="red")
+                itemstyle_opts=opts.ItemStyleOpts(color="red")  # 快线
 
             )
                 .add_yaxis(
@@ -165,7 +165,7 @@ class AnalysisVisualization:
                 is_hover_animation=False,
                 linestyle_opts=opts.LineStyleOpts(width=3, opacity=0.5),
                 label_opts=opts.LabelOpts(is_show=False),
-                itemstyle_opts=opts.ItemStyleOpts(color="green")
+                itemstyle_opts=opts.ItemStyleOpts(color="blue")  # 慢线
             )
 
                 .set_global_opts(title_opts=opts.TitleOpts(title="MACD", pos_top="675px"),
@@ -200,7 +200,7 @@ class AnalysisVisualization:
                 is_hover_animation=False,
                 linestyle_opts=opts.LineStyleOpts(width=3, opacity=0.5, type_='dashed'),
                 label_opts=opts.LabelOpts(is_show=False),
-                itemstyle_opts=opts.ItemStyleOpts(color="green")
+                itemstyle_opts=opts.ItemStyleOpts(color="red")
             )
 
                 .add_yaxis(
@@ -210,8 +210,25 @@ class AnalysisVisualization:
                 is_hover_animation=False,
                 linestyle_opts=opts.LineStyleOpts(width=3, opacity=0.5),
                 label_opts=opts.LabelOpts(is_show=False),
-                itemstyle_opts=opts.ItemStyleOpts(color="red")
+                itemstyle_opts=opts.ItemStyleOpts(color="green"))
+
+                .add_yaxis(
+                series_name=">80",
+                y_axis=['80'] * len(k),
+                linestyle_opts=opts.LineStyleOpts(width=2, opacity=0.5),
+                label_opts=opts.LabelOpts(is_show=False),  # 隐藏数据点的标签
+                symbol="none",  # 隐藏数据点
+                # itemstyle_opts=opts.ItemStyleOpts(color="black"),
+                # itemstyle_opts=opts.ItemStyleOpts(color="transparent"),  # 隐藏数据点
             )
+
+                .add_yaxis(series_name="<20",
+                           y_axis=['20'] * len(k),
+                           linestyle_opts=opts.LineStyleOpts(width=2, opacity=0.5),
+                           label_opts=opts.LabelOpts(is_show=False),  # 隐藏数据点的标签
+                           symbol="none",  # 隐藏数据点
+                           # itemstyle_opts=opts.ItemStyleOpts(color="transparent"),  # 隐藏数据点
+                           )
 
                 .set_global_opts(title_opts=opts.TitleOpts(title="KDJ", pos_top="950px"),
                                  legend_opts=opts.LegendOpts(is_show=True, pos_left="190px",
@@ -241,7 +258,7 @@ def analysis_graph_combination(data, name, ticker):
 
     # 5.组合【使用网格将多张图标组合到一起显示】
     # height='1300px'
-    grid_chart = Grid(init_opts=opts.InitOpts(width='1260px', height="100%"))
+    grid_chart = Grid(init_opts=opts.InitOpts(width='1260px', height="1300px"))
 
     grid_chart.add(
         k_line,

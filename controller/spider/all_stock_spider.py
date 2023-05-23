@@ -12,7 +12,8 @@ import numpy as np
 import pandas as pd
 import requests
 
-from controller.spider.utils import get_conn, close_conn, data_transform_all_stock
+from controller.spider.utils import data_transform_all_stock
+from controller.sql_utils import get_conn, close_conn
 
 
 def all_stock_crawl(max_page=2):
@@ -44,13 +45,16 @@ def insert_all_stock_info(data_source: pd.DataFrame):
     cursor = None
     conn = None
     try:
-        crawl_time = datetime.date.today()  # 获取抓取时间
+        # crawl_time = datetime.date.today()  # 获取抓取时间
+        crawl_time = datetime.datetime.now() # 获取抓取时间【加上时分秒】
 
         print(f"{time.asctime()} 开始插入所有股票信息数据...")
         conn, cursor = get_conn()
         sql = "insert into all_stock_info values(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
 
         for k, v in zip(data_source.index, data_source.values):
+            # 为了区分热度，便于后面获取top10【30只股票之间相邻的股票时间设置相差1min】
+            crawl_time += datetime.timedelta(minutes=1)
             # data_source.index 是一维数组，data_source.values 是二维数组
 
             # print(np.insert(v, [0, 0], [crawl_time, k]))

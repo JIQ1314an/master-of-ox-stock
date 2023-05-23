@@ -33,27 +33,48 @@
             z-index: 2;
         }
 
+        .ssa {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            overflow: auto;
+        }
+
+        .ssa iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1300px;
+            border: none;
+
+        }
     </style>
 </head>
 <body>
 <div class="select">
     <h4>股票代码及名称&emsp;&emsp;</h4>
+
     <select class="selectpicker" id="eq_num" data-actions-box="true" data-live-search="true"
             data-live-search-placeholder="请选择···">
         <!--        <option>SH600125  铁龙物流</option>-->
     </select>
-
-    <!--    <button>立即查询</button>-->
     &emsp;
-    <input id="button" type="button" value="立即查询" onclick="buttonClick();">
-</div>
 
+    <!-- 提交按钮 -->
+    <button id="submit-btn">立即查询</button>
+
+</div>
+<!-- 更新的结果显示区域 -->
+<div class="ssa" id="result">
+    <!--    <iframe src="{{ url_for('get_sstock_analysis_drawing') }}"></iframe>-->
+</div>
 
 <script>
     $.ajax({
         url: "/get_stock_basic_info",
         success: function (data) {
-            // console.log (data.name);
+            // console.logs (data.name);
             var names = data.name;
             var symbols = data.symbol
             $('#eq_num').empty();//清空select，不然每点一次都循环添加一遍数据越来越多
@@ -70,7 +91,35 @@
     })
 </script>
 
+<script>
+    $(function () {
+        // 绑定提交按钮的点击事件
+        $('#submit-btn').click(function () {
+            // 获取选择框的值
+            var value = $('#eq_num').val();
+            // 发送 Ajax 请求
+            $.ajax({
+                url: '/get_sstock_analysis_drawing',
+                data: {value: value},
+                type: 'POST',
+                success: function (data) {
+                    // 发送get请求并刷新html页面
+                    console.log("请求成功");
+                    var url = "http://127.0.0.1:5000/update_sstock_analysis?t=" + new Date().getTime();
 
+                    $('#result').load(url, function () {
+                        console.log("加载成功");
+                    });
+                    // 更新页面
+                    // $('#result iframe').attr('src', '{{ url_for("update_sstock_analysis") }}?t=' + new Date().getTime());
+                }
+            });
+        });
+    });
+</script>
+
+<!--  动态交互-->
+<!--
 <div id="ssv" style="width: 1260px; height: 1300px"></div>
 <script>
     $(
@@ -87,6 +136,26 @@
         }
     )
 </script>
+-->
+
+
+<!--<script>
+
+    $('select').on('change', function () {
+        var selected_option = $(this).find('option:selected').text();
+
+        $.ajax({
+            url: '/get_select_stock_to_analysis',
+            type: 'POST',
+            data: {selected_option: selected_option},
+            success: function (response) {
+                // 处理响应
+            }
+        });
+    });
+
+
+</script>-->
 
 
 </body>
